@@ -266,12 +266,15 @@ class SimpleSimulator
         rng.seed(ss);
         gsl_rng_set(r_gsl, seed);
     }
-    py::list nextRandom(std::vector<uint64_t> numberPerName) {
+    py::list nextRandomHG(std::vector<uint64_t> numberPerName) {
         return py::cast(::randomMultHGIndexImpl(numberPerName, rng));
+    }
+    py::list nextRandomMN(std::vector<uint64_t> numberPerName) {
+        return py::cast(::randomMultNomImpl(numberPerName, rng));
     }
 
  public:
-    py::array_t<int> iterateHGChunk(
+    py::array_t<int> iterateChunkHG(
         std::vector<uint64_t> numberPerName,
         int nIters,
         bool onlyReturnLast = true) {
@@ -293,7 +296,7 @@ class SimpleSimulator
         }
         return py::cast(result);
     }
-    py::array_t<int> iterateMNChunk(
+    py::array_t<int> iterateChunkMN(
         std::vector<uint64_t> numberPerName,
         int nIters,
         bool onlyReturnLast = true) {
@@ -317,15 +320,16 @@ class SimpleSimulator
     }
 };
 
-PYBIND11_MODULE(surname_sim, m) {
+PYBIND11_MODULE(_sim, m) {
     m.doc() = "pybind11 class";
     m.def("randomMultNomPy", &randomMultNomPy, "", py::arg("number_per_name"), py::arg("seed") = 42);
     py::class_<SimpleSimulator>(m, "SimpleSimulator")
         .def(py::init<unsigned int>(), py::arg("seed") = 42)
-        .def("nextRandom", &SimpleSimulator::nextRandom, py::arg("number_per_name"))
-        .def("iterateChunkHG", &SimpleSimulator::iterateHGChunk,
+        .def("nextRandomHG", &SimpleSimulator::nextRandomHG, py::arg("number_per_name"))
+        .def("nextRandomMN", &SimpleSimulator::nextRandomMN, py::arg("number_per_name"))
+        .def("iterateChunkHG", &SimpleSimulator::iterateChunkHG,
             py::arg("number_per_name"), py::arg("iters"), py::arg("onlyLast") = true)
-        .def("iterateChunkMN", &SimpleSimulator::iterateMNChunk,
+        .def("iterateChunkMN", &SimpleSimulator::iterateChunkMN,
             py::arg("number_per_name"), py::arg("iters"), py::arg("onlyLast") = true);
     #ifdef VERSION_INFO
         m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);

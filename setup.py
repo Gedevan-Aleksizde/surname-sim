@@ -13,7 +13,7 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 
 class CMakeExtension(Extension):
     def __init__(self, name: str, sourcedir: str = "") -> None:
@@ -85,15 +85,15 @@ class CMakeBuild(build_ext):
 
 if __name__ == '__main__':
     setup(
-        name='surname-sim',
+        name='surname_sim',
         version=VERSION,
-        url='',
+        url='https://github.com/Gedevan-Aleksizde/surname-sim',
         license='MIT License',
         author='s_katagiri',
         author_email='katagiri.stsh@gmail.com',
         description='',
-        long_description="",
-        packages=find_packages(),
+        long_description='',
+        packages=['surname_sim'],
         install_requires=[
             'pandas>=2.2.1',
             'tqdm>=4.66.2',
@@ -103,9 +103,10 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.10',
             'Programming Language :: Python :: 3.11'
         ],
-        ext_modules=[CMakeExtension("surname_sim")],
+        ext_modules=[CMakeExtension("surname_sim/_sim")],
         extras_require={"test": "pytest"},
         cmdclass={"build_ext": CMakeBuild},
+        package_data={'surname_sim': ['data/myoji.csv']},
         zip_safe=False,
         python_requires='>=3.11, <4',
     )
